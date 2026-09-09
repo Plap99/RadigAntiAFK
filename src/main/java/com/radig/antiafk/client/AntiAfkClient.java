@@ -1,4 +1,7 @@
 package com.radig.antiafk.client;
+import com.radig.antiafk.config.AntiAfkConfig;
+import com.radig.antiafk.action.AntiAfkAction;
+import com.radig.antiafk.action.AntiAfkActionSelector;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.radig.antiafk.RadigAntiAFK;
@@ -24,8 +27,8 @@ public final class AntiAfkClient {
 
     private static boolean enabled = false;
     private static long nextActionTime = 0;
-    private static long sneakReleaseTime = 10000;
-    private static boolean autoSneaking = false;
+    private static AntiAfkAction currentAction = null;
+    private static long actionReleaseTime = 0;
 
     public static boolean isEnabled() {
         return enabled;
@@ -67,6 +70,65 @@ public final class AntiAfkClient {
         return (remaining + 999) / 1000;
     }
     
+    private static void executeAction(
+            Minecraft minecraft,
+            AntiAfkAction action,
+            long now) {
+        currentAction = action;
+
+        switch (action) {
+
+            case CROUCH -> {
+                minecraft.options.keyShift.setDown(true);
+
+                actionReleaseTime = now + AntiAfkConfig.getCrouchDurationMilliseconds();
+            }
+
+            case JUMP -> {
+                minecraft.options.keyJump.setDown(true);
+
+                actionReleaseTime = now + 250;
+            }
+
+            default -> {
+                currentAction = null;
+            }
+        }
+    }
+
+    private static void scheduleNextAction(long now) {
+
+        long minDelay = AntiAfkConfig.getMinActionDelaySeconds() * 1000L;
+
+        long maxDelay = AntiAfkConfig.getMaxActionDelaySeconds() * 1000L;
+
+        long randomDelay = minDelay
+                + (long) (Math.random() * (maxDelay - minDelay + 1));
+
+        nextActionTime = now + randomDelay;
+    }
+
+    private static void releaseCurrentAction(Minecraft minecraft) {
+        if (currentAction == null) {
+            return;
+        }
+
+        switch (currentAction) {
+
+            case CROUCH ->
+                minecraft.options.keyShift.setDown(false);
+
+            case JUMP ->
+                minecraft.options.keyJump.setDown(false);
+
+            default -> {
+            }
+        }
+
+        currentAction = null;
+        actionReleaseTime = 0;
+    }
+
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(TOGGLE_KEY);
@@ -82,7 +144,7 @@ public final class AntiAfkClient {
 
         // Si el Anti-AFK está activo y el jugador vuelve a usar los controles,
         // asumimos que regresó y lo desactivamos automáticamente.
-        if (enabled && !autoSneaking) {
+        if (enabled && currentAction == null) {
 
             boolean playerMoved =
                 minecraft.options.keyUp.isDown()
@@ -94,8 +156,7 @@ public final class AntiAfkClient {
 
             if (playerMoved) {
                 enabled = false;
-                minecraft.options.keyShift.setDown(false);
-                autoSneaking = false;
+                releaseCurrentAction(minecraft);
 
                 minecraft.player.sendSystemMessage(
                     Component.literal(
@@ -111,10 +172,9 @@ public final class AntiAfkClient {
             enabled = !enabled;
 
             if (enabled) {
-                nextActionTime = System.currentTimeMillis() + 5_000; // Primera acción después de 5 segundos.
+                nextActionTime = System.currentTimeMillis() + AntiAfkConfig.getFirstActionDelaySeconds() * 1000L;
             } else {
-                minecraft.options.keyShift.setDown(false);
-                autoSneaking = false;
+                releaseCurrentAction(minecraft);
             }
 
             minecraft.player.sendSystemMessage(
@@ -133,21 +193,20 @@ public final class AntiAfkClient {
         long now = System.currentTimeMillis();
 
         //Soltar SHIFT después de aproximadamente medio segundo.
-        if (autoSneaking && now >= sneakReleaseTime) {
-            minecraft.options.keyShift.setDown(false);
-            autoSneaking = false;
+        if (currentAction != null && now >= actionReleaseTime) {
+            releaseCurrentAction(minecraft);
         }
 
         // Ejecutar nueva acción Anti-AFK.
-        if (!autoSneaking && now >= nextActionTime) {
-            minecraft.options.keyShift.setDown(true);
-            autoSneaking = true;
-            sneakReleaseTime = now + 500; // Mantener SHIFT presionado durante 0.5 segundos.
-            
-            //Próxima acción entre 45 y 90 segundos.
-            long randomDelay = 45_000 + (long) (Math.random() * 45_000);
+        if (currentAction == null && now >= nextActionTime) {
 
-            nextActionTime = now + randomDelay;
+            AntiAfkAction action = AntiAfkActionSelector.getRandomEnabledAction();
+
+            if (action != null) {
+                executeAction(minecraft, action, now);
+            }
+
+            scheduleNextAction(now);
         }
     }
 }
