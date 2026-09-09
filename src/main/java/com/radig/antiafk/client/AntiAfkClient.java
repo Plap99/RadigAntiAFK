@@ -59,6 +59,12 @@ public final class AntiAfkClient {
         CATEGORY
     );
 
+    private static final KeyMapping CONFIG_KEY = new KeyMapping(
+            "key.radigantiafk.config",
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_F7,
+            CATEGORY);
+
     private AntiAfkClient() {
     }
 
@@ -314,6 +320,7 @@ public final class AntiAfkClient {
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(TOGGLE_KEY);
+        event.register(CONFIG_KEY);
     }
 
     @SubscribeEvent
@@ -349,6 +356,11 @@ public final class AntiAfkClient {
 
                 return;
             }
+        }
+
+        while (CONFIG_KEY.consumeClick()) {
+            minecraft.gui.setScreen(
+                    new AntiAfkConfigScreen());
         }
 
         while (TOGGLE_KEY.consumeClick()) {

@@ -1,4 +1,5 @@
 {
   "key.radigantiafk.toggle": "Activar / Desactivar Anti-AFK",
-  "key.category.radigantiafk.general": "Radig Anti-AFK"
+  "key.category.radigantiafk.general": "Radig Anti-AFK",
+  "key.radigantiafk.config": "Abrir configuración Anti-AFK"
 }

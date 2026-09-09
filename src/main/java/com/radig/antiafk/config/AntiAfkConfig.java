@@ -95,6 +95,26 @@ public final class AntiAfkConfig {
         return returnToOriginEnabled;
     }
     
+    public static void setCrouchEnabled(boolean enabled) {
+        crouchEnabled = enabled;
+    }
+
+    public static void setJumpEnabled(boolean enabled) {
+        jumpEnabled = enabled;
+    }
+
+    public static void setRotateEnabled(boolean enabled) {
+        rotateEnabled = enabled;
+    }
+
+    public static void setWalkEnabled(boolean enabled) {
+        walkEnabled = enabled;
+    }
+
+    public static void setReturnToOriginEnabled(boolean enabled) {
+        returnToOriginEnabled = enabled;
+    }
+
     public static boolean isActionEnabled(AntiAfkAction action) {
         return switch (action) {
             case CROUCH -> crouchEnabled;
@@ -106,5 +126,45 @@ public final class AntiAfkConfig {
                     WALK_RIGHT ->
                 walkEnabled;
         };
+    }
+
+    public static void setMinActionDelaySeconds(int seconds) {
+        minActionDelaySeconds = Math.max(1, seconds);
+
+        if (maxActionDelaySeconds < minActionDelaySeconds) {
+            maxActionDelaySeconds = minActionDelaySeconds;
+        }
+    }
+
+    public static void setMaxActionDelaySeconds(int seconds) {
+        maxActionDelaySeconds = Math.max(minActionDelaySeconds, seconds);
+    }
+
+    public static void setMinRotateDegrees(float degrees) {
+        minRotateDegrees = Math.max(1.0f, Math.min(180.0f, degrees));
+
+        if (maxRotateDegrees < minRotateDegrees) {
+            maxRotateDegrees = minRotateDegrees;
+        }
+    }
+
+    public static void setMaxRotateDegrees(float degrees) {
+        maxRotateDegrees = Math.max(
+                minRotateDegrees,
+                Math.min(180.0f, degrees));
+    }
+
+    public static void setMinWalkDurationMilliseconds(int milliseconds) {
+        minWalkDurationMilliseconds = Math.max(100, milliseconds);
+
+        if (maxWalkDurationMilliseconds < minWalkDurationMilliseconds) {
+            maxWalkDurationMilliseconds = minWalkDurationMilliseconds;
+        }
+    }
+
+    public static void setMaxWalkDurationMilliseconds(int milliseconds) {
+        maxWalkDurationMilliseconds = Math.max(
+                minWalkDurationMilliseconds,
+                milliseconds);
     }
 }
