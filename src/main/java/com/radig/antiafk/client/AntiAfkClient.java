@@ -27,6 +27,14 @@ public final class AntiAfkClient {
     private static long sneakReleaseTime = 10000;
     private static boolean autoSneaking = false;
 
+    public static boolean isEnabled() {
+        return enabled;
+    }
+
+    static {
+        AntiAfkHud.init();
+    }
+
     private static final KeyMapping.Category CATEGORY =
         KeyMapping.Category.register(
             Identifier.fromNamespaceAndPath(
@@ -45,6 +53,20 @@ public final class AntiAfkClient {
     private AntiAfkClient() {
     }
 
+    public static long getSecondsUntilNextAction() {
+        if (!enabled) {
+            return 0;
+        }
+
+        long remaining = nextActionTime - System.currentTimeMillis();
+
+        if (remaining <= 0) {
+            return 0;
+        }
+
+        return (remaining + 999) / 1000;
+    }
+    
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(TOGGLE_KEY);
@@ -89,7 +111,7 @@ public final class AntiAfkClient {
             enabled = !enabled;
 
             if (enabled) {
-                nextActionTime = System.currentTimeMillis() + 5_000; // Primera acción después de 45 segundos.
+                nextActionTime = System.currentTimeMillis() + 5_000; // Primera acción después de 5 segundos.
             } else {
                 minecraft.options.keyShift.setDown(false);
                 autoSneaking = false;
