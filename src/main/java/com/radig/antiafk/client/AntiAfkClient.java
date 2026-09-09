@@ -120,6 +120,40 @@ public final class AntiAfkClient {
                 actionReleaseTime = now + duration;
             }
             
+            case WALK_FORWARD,
+                    WALK_BACKWARD,
+                    WALK_LEFT,
+                    WALK_RIGHT -> {
+
+                switch (action) {
+
+                    case WALK_FORWARD ->
+                        minecraft.options.keyUp.setDown(true);
+
+                    case WALK_BACKWARD ->
+                        minecraft.options.keyDown.setDown(true);
+
+                    case WALK_LEFT ->
+                        minecraft.options.keyLeft.setDown(true);
+
+                    case WALK_RIGHT ->
+                        minecraft.options.keyRight.setDown(true);
+
+                    default -> {
+                    }
+                }
+
+                int minDuration = AntiAfkConfig.getMinWalkDurationMilliseconds();
+
+                int maxDuration = AntiAfkConfig.getMaxWalkDurationMilliseconds();
+
+                long duration = minDuration
+                        + (long) (Math.random()
+                                * (maxDuration - minDuration + 1));
+
+                actionReleaseTime = now + duration;
+            }
+
             default -> {
                 currentAction = null;
             }
@@ -156,6 +190,18 @@ public final class AntiAfkClient {
                     minecraft.player.setYRot(rotationTargetYaw);
                 }
             }
+
+            case WALK_FORWARD ->
+                minecraft.options.keyUp.setDown(false);
+
+            case WALK_BACKWARD ->
+                minecraft.options.keyDown.setDown(false);
+
+            case WALK_LEFT ->
+                minecraft.options.keyLeft.setDown(false);
+
+            case WALK_RIGHT ->
+                minecraft.options.keyRight.setDown(false);
 
             default -> {
             }

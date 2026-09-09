@@ -19,11 +19,15 @@ public final class AntiAfkConfig {
     private static int minRotateDurationMilliseconds = 400;
     private static int maxRotateDurationMilliseconds = 800;
 
+    // Configuración de caminata.
+    private static int minWalkDurationMilliseconds = 500;
+    private static int maxWalkDurationMilliseconds = 1500;
+
     // Acciones disponibles.
     private static boolean crouchEnabled = true;
     private static boolean jumpEnabled = true;
     private static boolean rotateEnabled = true;
-    private static boolean walkEnabled = false;
+    private static boolean walkEnabled = true;
 
     private AntiAfkConfig() {
     }
@@ -74,6 +78,14 @@ public final class AntiAfkConfig {
 
     public static int getMaxRotateDurationMilliseconds() {
         return maxRotateDurationMilliseconds;
+    }
+
+    public static int getMinWalkDurationMilliseconds() {
+        return minWalkDurationMilliseconds;
+    }
+
+    public static int getMaxWalkDurationMilliseconds() {
+        return maxWalkDurationMilliseconds;
     }
 
     public static boolean isActionEnabled(AntiAfkAction action) {

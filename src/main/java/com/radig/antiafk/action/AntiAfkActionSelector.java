@@ -12,22 +12,43 @@ public final class AntiAfkActionSelector {
     }
 
     public static AntiAfkAction getRandomEnabledAction() {
+        List<AntiAfkAction> actionTypes = new ArrayList<>();
 
-        List<AntiAfkAction> enabledActions = new ArrayList<>();
-
-        for (AntiAfkAction action : AntiAfkAction.values()) {
-            if (AntiAfkConfig.isActionEnabled(action)) {
-                enabledActions.add(action);
-            }
+        if (AntiAfkConfig.isCrouchEnabled()) {
+            actionTypes.add(AntiAfkAction.CROUCH);
         }
 
-        if (enabledActions.isEmpty()) {
+        if (AntiAfkConfig.isJumpEnabled()) {
+            actionTypes.add(AntiAfkAction.JUMP);
+        }
+
+        if (AntiAfkConfig.isRotateEnabled()) {
+            actionTypes.add(
+                    ThreadLocalRandom.current().nextBoolean()
+                            ? AntiAfkAction.ROTATE_LEFT
+                            : AntiAfkAction.ROTATE_RIGHT);
+        }
+
+        if (AntiAfkConfig.isWalkEnabled()) {
+
+            AntiAfkAction[] walkActions = {
+                    AntiAfkAction.WALK_FORWARD,
+                    AntiAfkAction.WALK_BACKWARD,
+                    AntiAfkAction.WALK_LEFT,
+                    AntiAfkAction.WALK_RIGHT
+            };
+
+            actionTypes.add(
+                    walkActions[ThreadLocalRandom.current()
+                            .nextInt(walkActions.length)]);
+        }
+
+        if (actionTypes.isEmpty()) {
             return null;
         }
 
-        int index = ThreadLocalRandom.current()
-            .nextInt(enabledActions.size());
-
-        return enabledActions.get(index);
+        return actionTypes.get(
+                ThreadLocalRandom.current()
+                        .nextInt(actionTypes.size()));
     }
 }
