@@ -32,6 +32,9 @@ public final class AntiAfkClient {
     private static float rotationStartYaw = 0;
     private static float rotationTargetYaw = 0;
     private static long rotationStartTime = 0;
+    private static boolean returningFromWalk = false;
+    private static AntiAfkAction originalWalkAction = null;
+    private static long walkDurationMilliseconds = 0;
 
     public static boolean isEnabled() {
         return enabled;
@@ -151,6 +154,10 @@ public final class AntiAfkClient {
                         + (long) (Math.random()
                                 * (maxDuration - minDuration + 1));
 
+                originalWalkAction = action;
+                walkDurationMilliseconds = duration;
+                returningFromWalk = false;
+
                 actionReleaseTime = now + duration;
             }
 
@@ -240,6 +247,70 @@ public final class AntiAfkClient {
         minecraft.player.setYRot(currentYaw);
     }
 
+    private static boolean isWalkAction(AntiAfkAction action) {
+        return action == AntiAfkAction.WALK_FORWARD
+                || action == AntiAfkAction.WALK_BACKWARD
+                || action == AntiAfkAction.WALK_LEFT
+                || action == AntiAfkAction.WALK_RIGHT;
+    }
+
+    private static AntiAfkAction getOppositeWalkAction(
+            AntiAfkAction action) {
+        return switch (action) {
+            case WALK_FORWARD -> AntiAfkAction.WALK_BACKWARD;
+            case WALK_BACKWARD -> AntiAfkAction.WALK_FORWARD;
+            case WALK_LEFT -> AntiAfkAction.WALK_RIGHT;
+            case WALK_RIGHT -> AntiAfkAction.WALK_LEFT;
+
+            default -> null;
+        };
+    }
+
+    private static void startReturnWalk(
+            Minecraft minecraft,
+            long now) {
+        AntiAfkAction returnAction = getOppositeWalkAction(originalWalkAction);
+
+        if (returnAction == null) {
+            releaseCurrentAction(minecraft);
+            resetWalkState();
+            return;
+        }
+
+        // Soltamos la dirección original.
+        releaseCurrentAction(minecraft);
+
+        // Empezamos la dirección contraria.
+        currentAction = returnAction;
+        returningFromWalk = true;
+
+        switch (returnAction) {
+
+            case WALK_FORWARD ->
+                minecraft.options.keyUp.setDown(true);
+
+            case WALK_BACKWARD ->
+                minecraft.options.keyDown.setDown(true);
+
+            case WALK_LEFT ->
+                minecraft.options.keyLeft.setDown(true);
+
+            case WALK_RIGHT ->
+                minecraft.options.keyRight.setDown(true);
+
+            default -> {
+            }
+        }
+
+        actionReleaseTime = now + walkDurationMilliseconds;
+    }
+
+    private static void resetWalkState() {
+        returningFromWalk = false;
+        originalWalkAction = null;
+        walkDurationMilliseconds = 0;
+    }
+
     @SubscribeEvent
     public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
         event.register(TOGGLE_KEY);
@@ -268,6 +339,7 @@ public final class AntiAfkClient {
             if (playerMoved) {
                 enabled = false;
                 releaseCurrentAction(minecraft);
+                resetWalkState();
 
                 minecraft.player.sendSystemMessage(
                     Component.literal(
@@ -286,6 +358,7 @@ public final class AntiAfkClient {
                 nextActionTime = System.currentTimeMillis() + AntiAfkConfig.getFirstActionDelaySeconds() * 1000L;
             } else {
                 releaseCurrentAction(minecraft);
+                resetWalkState();
             }
 
             minecraft.player.sendSystemMessage(
@@ -308,9 +381,17 @@ public final class AntiAfkClient {
             updateRotation(minecraft, now);
         }
 
-        //Soltar SHIFT después de aproximadamente medio segundo.
+        // Finalizar la acción automática cuando termine su duración.
         if (currentAction != null && now >= actionReleaseTime) {
-            releaseCurrentAction(minecraft);
+
+            if (isWalkAction(currentAction)
+                    && AntiAfkConfig.isReturnToOriginEnabled()
+                    && !returningFromWalk) {
+                startReturnWalk(minecraft, now);
+            } else {
+                releaseCurrentAction(minecraft);
+                resetWalkState();
+            }
         }
 
         // Ejecutar nueva acción Anti-AFK.

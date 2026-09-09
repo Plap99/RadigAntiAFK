@@ -23,6 +23,9 @@ public final class AntiAfkConfig {
     private static int minWalkDurationMilliseconds = 500;
     private static int maxWalkDurationMilliseconds = 1500;
 
+    // Regresar aproximadamente al punto de inicio después de caminar.
+    private static boolean returnToOriginEnabled = true;
+
     // Acciones disponibles.
     private static boolean crouchEnabled = true;
     private static boolean jumpEnabled = true;
@@ -88,6 +91,10 @@ public final class AntiAfkConfig {
         return maxWalkDurationMilliseconds;
     }
 
+    public static boolean isReturnToOriginEnabled() {
+        return returnToOriginEnabled;
+    }
+    
     public static boolean isActionEnabled(AntiAfkAction action) {
         return switch (action) {
             case CROUCH -> crouchEnabled;
