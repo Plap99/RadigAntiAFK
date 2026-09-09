@@ -7,16 +7,22 @@ public final class AntiAfkConfig {
     private static int firstActionDelaySeconds = 5;
 
     // Intervalo aleatorio entre acciones.
-    private static int minActionDelaySeconds = 5; //45;
-    private static int maxActionDelaySeconds = 10; //90;
+    private static int minActionDelaySeconds = 5; //45;     Habilitar para pruebas rápidas.
+    private static int maxActionDelaySeconds = 10; //90;     Habilitar para pruebas rápidas.
 
     // Duración del agachado.
     private static int crouchDurationMilliseconds = 500;
 
+    // Configuración del giro.
+    private static float minRotateDegrees = 20.0f;
+    private static float maxRotateDegrees = 70.0f;
+    private static int minRotateDurationMilliseconds = 400;
+    private static int maxRotateDurationMilliseconds = 800;
+
     // Acciones disponibles.
     private static boolean crouchEnabled = true;
     private static boolean jumpEnabled = true;
-    private static boolean rotateEnabled = false;
+    private static boolean rotateEnabled = true;
     private static boolean walkEnabled = false;
 
     private AntiAfkConfig() {
@@ -52,6 +58,22 @@ public final class AntiAfkConfig {
 
     public static boolean isWalkEnabled() {
         return walkEnabled;
+    }
+
+    public static float getMinRotateDegrees() {
+        return minRotateDegrees;
+    }
+
+    public static float getMaxRotateDegrees() {
+        return maxRotateDegrees;
+    }
+
+    public static int getMinRotateDurationMilliseconds() {
+        return minRotateDurationMilliseconds;
+    }
+
+    public static int getMaxRotateDurationMilliseconds() {
+        return maxRotateDurationMilliseconds;
     }
 
     public static boolean isActionEnabled(AntiAfkAction action) {

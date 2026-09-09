@@ -29,6 +29,9 @@ public final class AntiAfkClient {
     private static long nextActionTime = 0;
     private static AntiAfkAction currentAction = null;
     private static long actionReleaseTime = 0;
+    private static float rotationStartYaw = 0;
+    private static float rotationTargetYaw = 0;
+    private static long rotationStartTime = 0;
 
     public static boolean isEnabled() {
         return enabled;
@@ -90,6 +93,33 @@ public final class AntiAfkClient {
                 actionReleaseTime = now + 250;
             }
 
+            case ROTATE_LEFT, ROTATE_RIGHT -> {
+                float minDegrees = AntiAfkConfig.getMinRotateDegrees();
+
+                float maxDegrees = AntiAfkConfig.getMaxRotateDegrees();
+
+                float degrees = minDegrees
+                        + (float) Math.random() * (maxDegrees - minDegrees);
+
+                if (action == AntiAfkAction.ROTATE_LEFT) {
+                    degrees = -degrees;
+                }
+
+                rotationStartYaw = minecraft.player.getYRot();
+                rotationTargetYaw = rotationStartYaw + degrees;
+
+                rotationStartTime = now;
+
+                int minDuration = AntiAfkConfig.getMinRotateDurationMilliseconds();
+
+                int maxDuration = AntiAfkConfig.getMaxRotateDurationMilliseconds();
+
+                long duration = minDuration
+                        + (long) (Math.random() * (maxDuration - minDuration + 1));
+
+                actionReleaseTime = now + duration;
+            }
+            
             default -> {
                 currentAction = null;
             }
@@ -121,12 +151,47 @@ public final class AntiAfkClient {
             case JUMP ->
                 minecraft.options.keyJump.setDown(false);
 
+            case ROTATE_LEFT, ROTATE_RIGHT -> {
+                if (minecraft.player != null) {
+                    minecraft.player.setYRot(rotationTargetYaw);
+                }
+            }
+
             default -> {
             }
         }
 
         currentAction = null;
         actionReleaseTime = 0;
+    }
+
+    private static void updateRotation(
+            Minecraft minecraft,
+            long now) {
+        if (minecraft.player == null) {
+            return;
+        }
+
+        long totalDuration = actionReleaseTime - rotationStartTime;
+
+        if (totalDuration <= 0) {
+            minecraft.player.setYRot(rotationTargetYaw);
+            return;
+        }
+
+        float progress = (float) (now - rotationStartTime)
+                / (float) totalDuration;
+
+        progress = Math.max(0.0f, Math.min(1.0f, progress));
+
+        // Suavizado para que el giro no sea completamente lineal.
+        float smoothProgress = progress * progress * (3.0f - 2.0f * progress);
+
+        float currentYaw = rotationStartYaw
+                + (rotationTargetYaw - rotationStartYaw)
+                        * smoothProgress;
+
+        minecraft.player.setYRot(currentYaw);
     }
 
     @SubscribeEvent
@@ -191,6 +256,11 @@ public final class AntiAfkClient {
         }
 
         long now = System.currentTimeMillis();
+
+        if (currentAction == AntiAfkAction.ROTATE_LEFT
+                || currentAction == AntiAfkAction.ROTATE_RIGHT) {
+            updateRotation(minecraft, now);
+        }
 
         //Soltar SHIFT después de aproximadamente medio segundo.
         if (currentAction != null && now >= actionReleaseTime) {
