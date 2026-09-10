@@ -8,6 +8,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import net.minecraft.client.gui.screens.Screen;
+
 public final class AntiAfkConfigScreen extends Screen {
 
     private int currentPage = 0;
@@ -28,10 +30,17 @@ public final class AntiAfkConfigScreen extends Screen {
 
     private Button returnButton;
 
+    private final Screen parent;
+
     public AntiAfkConfigScreen() {
-        super(Component.literal("Radig Anti-AFK"));
+        this(null);
     }
 
+    public AntiAfkConfigScreen(Screen parent) {
+        super(Component.literal("Radig Anti-AFK"));
+        this.parent = parent;
+    }
+    
     @Override
     protected void init() {
 
@@ -578,7 +587,9 @@ public final class AntiAfkConfigScreen extends Screen {
 
         AntiAfkConfigManager.save();
 
-        super.onClose();
+        if (this.minecraft != null) {
+            this.minecraft.gui.setScreen(this.parent);
+        }
     }
 
     // =========================================================

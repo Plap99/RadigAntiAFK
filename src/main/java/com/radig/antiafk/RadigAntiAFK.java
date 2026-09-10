@@ -7,10 +7,13 @@ import com.radig.antiafk.config.AntiAfkForgeConfig;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
+import com.radig.antiafk.client.AntiAfkConfigScreen;
 import com.radig.antiafk.config.AntiAfkConfigManager;
 
 import net.minecraftforge.eventbus.api.bus.BusGroup;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+
+import net.minecraftforge.common.MinecraftForge;
 
 @Mod(RadigAntiAFK.MOD_ID)
 public final class RadigAntiAFK {
@@ -23,6 +26,9 @@ public final class RadigAntiAFK {
                 ModConfig.Type.CLIENT,
                 AntiAfkForgeConfig.SPEC,
                 "radigantiafk-client.toml");
+
+        MinecraftForge.registerConfigScreen(
+                parent -> new AntiAfkConfigScreen(parent));
 
         BusGroup modBusGroup = context.getModBusGroup();
 
