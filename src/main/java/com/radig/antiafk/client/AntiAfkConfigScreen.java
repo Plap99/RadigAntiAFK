@@ -7,6 +7,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import com.radig.antiafk.config.AntiAfkConfigManager;
+
 public final class AntiAfkConfigScreen extends Screen {
 
     private Button crouchButton;
@@ -17,6 +19,8 @@ public final class AntiAfkConfigScreen extends Screen {
 
     public AntiAfkConfigScreen() {
         super(Component.literal("Radig Anti-AFK"));
+
+        AntiAfkConfigManager.load();
     }
 
     @Override
@@ -101,13 +105,11 @@ public final class AntiAfkConfigScreen extends Screen {
         );
 
         this.addRenderableWidget(
-            Button.builder(
-                Component.literal("Cerrar"),
-                button -> this.minecraft.gui.setScreen(null)
-            )
-            .bounds(centerX - 100, startY + 140, 200, 20)
-            .build()
-        );
+                Button.builder(
+                        Component.literal("Cerrar"),
+                        button -> this.onClose())
+                        .bounds(centerX - 100, startY + 140, 200, 20)
+                        .build());
     }
 
     @Override
@@ -131,6 +133,12 @@ public final class AntiAfkConfigScreen extends Screen {
             mouseY,
             partialTicks
         );
+    }
+
+    @Override
+    public void onClose() {
+        AntiAfkConfigManager.save();
+        super.onClose();
     }
 
     private Component getCrouchText() {
