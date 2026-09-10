@@ -1,37 +1,34 @@
-# See https://docs.minecraftforge.net/en/1.21.x/gettingstarted/modfiles/#modstoml
-# There are lots of things you can do with the mods.toml, and not all fields are included with this MDK
-# References: https://github.com/MinecraftForge/MDKExamples
-
 modLoader="javafml"
 loaderVersion="[65,)"
 license="All Rights Reserved"
-#issueTrackerURL="https://github.com/MyOrganization/MyMod/" #optional
-clientSideOnly=true #optional, default=false
+clientSideOnly=true
 
 [[mods]]
 modId="radigantiafk"
-version="0.1.0"
+version="1.0.0"
 displayName="Radig Anti-AFK"
-#updateJSONURL="https://example.com/updates.json" #optional
-#displayURL="https://example.com/" #optional
-#logoFile="examplemod.png" #optional
-#credits="" #optional
-authors="YourNameHere, OtherNameHere" #optional
-#displayTest="MATCH_VERSION" #optional, default=MATCH_VERSION when not clientSideOnly, else IGNORE_ALL_VERSION
 
-description='''Example mod description.
-Cliente Anti-AFK para Minecraft.'''
+displayURL="https://github.com/Plap99/RadigAntiAFK"
 
-[[dependencies.radigantiafk]] #recommended
-    modId="forge"
-    mandatory=true
-    versionRange="[65,)"
-    ordering="NONE"
-    side="BOTH"
+logoFile="radigantiafk.png"
 
-[[dependencies.radigantiafk]] #recommended
-    modId="minecraft"
-    mandatory=true
-    versionRange="[26.2,26.3,)"
-    ordering="NONE"
-    side="BOTH"
+authors="Radig"
+
+description='''
+Cliente Anti-AFK para Minecraft.
+Realiza acciones automáticas configurables como caminar, saltar, agacharse y girar la cámara para evitar quedar AFK.
+'''
+
+[[dependencies.radigantiafk]]
+modId="forge"
+mandatory=true
+versionRange="[65,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.radigantiafk]]
+modId="minecraft"
+mandatory=true
+versionRange="[26.2,26.3)"
+ordering="NONE"
+side="BOTH"
