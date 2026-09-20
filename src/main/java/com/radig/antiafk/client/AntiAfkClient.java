@@ -17,8 +17,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-import org.lwjgl.glfw.GLFW;
-
 @Mod.EventBusSubscriber(
     modid = RadigAntiAFK.MOD_ID,
     value = Dist.CLIENT
@@ -54,19 +52,15 @@ public final class AntiAfkClient {
 
     private static final KeyMapping TOGGLE_KEY = new KeyMapping(
         "key.radigantiafk.toggle",
-        InputConstants.Type.KEYSYM,
-        GLFW.GLFW_KEY_F8,
+        InputConstants.KEY_F9,
         CATEGORY
     );
 
     private static final KeyMapping CONFIG_KEY = new KeyMapping(
-            "key.radigantiafk.config",
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F7,
-            CATEGORY);
-
-    private AntiAfkClient() {
-    }
+        "key.radigantiafk.config",
+        InputConstants.KEY_F7,
+        CATEGORY
+    );
 
     public static long getSecondsUntilNextAction() {
         if (!enabled) {

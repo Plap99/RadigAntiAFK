@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[65,)"
+loaderVersion="[66,)"
 license="All Rights Reserved"
 clientSideOnly=true
 
@@ -7,13 +7,9 @@ clientSideOnly=true
 modId="radigantiafk"
 version="1.0.0"
 displayName="Radig Anti-AFK"
-
 displayURL="https://github.com/Plap99/RadigAntiAFK"
-
 logoFile="radigantiafk.png"
-
 authors="Radig"
-
 description='''
 Cliente Anti-AFK para Minecraft.
 Realiza acciones automáticas configurables como caminar, saltar, agacharse y girar la cámara para evitar quedar AFK.
@@ -22,13 +18,13 @@ Realiza acciones automáticas configurables como caminar, saltar, agacharse y gi
 [[dependencies.radigantiafk]]
 modId="forge"
 mandatory=true
-versionRange="[65,)"
+versionRange="[66,)"
 ordering="NONE"
 side="BOTH"
 
 [[dependencies.radigantiafk]]
 modId="minecraft"
 mandatory=true
-versionRange="[26.2,26.3)"
+versionRange="[26.3,26.4)"
 ordering="NONE"
 side="BOTH"
