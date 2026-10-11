@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "radigantiafk",
+  "version": "${version}",
+  "name": "Radig Anti-AFK",
+  "description": "Mod cliente con acciones Anti-AFK configurables: caminar, saltar, agacharse y girar la cámara.",
+  "authors": [
+    "Radig"
+  ],
+  "license": "All-Rights-Reserved",
+  "icon": "assets/radigantiafk/icon.png",
+  "environment": "client",
+  "contact": {
+    "homepage": "https://github.com/Plap99/RadigAntiAFK",
+    "sources": "https://github.com/Plap99/RadigAntiAFK",
+    "issues": "https://github.com/Plap99/RadigAntiAFK/issues"
+  },
+  "entrypoints": {
+    "client": [
+      "com.radig.antiafk.client.AntiAfkClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

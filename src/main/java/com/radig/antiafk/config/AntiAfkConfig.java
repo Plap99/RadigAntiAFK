@@ -7,8 +7,8 @@ public final class AntiAfkConfig {
     private static int firstActionDelaySeconds = 5;
 
     // Intervalo aleatorio entre acciones.
-    private static int minActionDelaySeconds = 5; //45;     Habilitar para pruebas rápidas.
-    private static int maxActionDelaySeconds = 10; //90;     Habilitar para pruebas rápidas.
+    private static int minActionDelaySeconds = 45;
+    private static int maxActionDelaySeconds = 90;
 
     // Duración del agachado.
     private static int crouchDurationMilliseconds = 500;

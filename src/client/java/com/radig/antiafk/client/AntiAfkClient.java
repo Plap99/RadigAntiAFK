@@ -1,5 +1,6 @@
 package com.radig.antiafk.client;
 import com.radig.antiafk.config.AntiAfkConfig;
+import com.radig.antiafk.config.AntiAfkConfigManager;
 import com.radig.antiafk.action.AntiAfkAction;
 import com.radig.antiafk.action.AntiAfkActionSelector;
 
@@ -11,17 +12,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 
-@Mod.EventBusSubscriber(
-    modid = RadigAntiAFK.MOD_ID,
-    value = Dist.CLIENT
-)
-public final class AntiAfkClient {
+public final class AntiAfkClient implements ClientModInitializer {
 
     private static boolean enabled = false;
     private static long nextActionTime = 0;
@@ -38,9 +33,6 @@ public final class AntiAfkClient {
         return enabled;
     }
 
-    static {
-        AntiAfkHud.init();
-    }
 
     private static final KeyMapping.Category CATEGORY =
         KeyMapping.Category.register(
@@ -52,13 +44,15 @@ public final class AntiAfkClient {
 
     private static final KeyMapping TOGGLE_KEY = new KeyMapping(
         "key.radigantiafk.toggle",
+        InputConstants.Type.KEYBOARD,
         InputConstants.KEY_F9,
         CATEGORY
     );
 
     private static final KeyMapping CONFIG_KEY = new KeyMapping(
         "key.radigantiafk.config",
-        InputConstants.KEY_F7,
+        InputConstants.Type.KEYBOARD,
+        InputConstants.KEY_F8,
         CATEGORY
     );
 
@@ -311,17 +305,24 @@ public final class AntiAfkClient {
         walkDurationMilliseconds = 0;
     }
 
-    @SubscribeEvent
-    public static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-        event.register(TOGGLE_KEY);
-        event.register(CONFIG_KEY);
+    @Override
+    public void onInitializeClient() {
+        AntiAfkConfigManager.load();
+        KeyMappingHelper.registerKeyMapping(TOGGLE_KEY);
+        KeyMappingHelper.registerKeyMapping(CONFIG_KEY);
+        ClientTickEvents.END_CLIENT_TICK.register(AntiAfkClient::onClientTick);
+        AntiAfkHud.init();
+        System.out.println("[Radig Anti-AFK] Fabric iniciado");
     }
 
-    @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent.Post event) {
-        Minecraft minecraft = Minecraft.getInstance();
+    private static void onClientTick(Minecraft minecraft) {
 
         if (minecraft.player == null) {
+            if (enabled || currentAction != null) {
+                releaseCurrentAction(minecraft);
+                resetWalkState();
+                enabled = false;
+            }
             return;
         }
 

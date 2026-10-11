@@ -8,7 +8,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-import net.minecraft.client.gui.screens.Screen;
 
 public final class AntiAfkConfigScreen extends Screen {
 
