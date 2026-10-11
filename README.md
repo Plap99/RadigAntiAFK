@@ -1,39 +1,47 @@
-# Radig Anti-AFK — Fabric 26.3 (port en pruebas)
+# Radig Anti-AFK — Fabric 26.2
 
-Edición Fabric **cliente** de Radig Anti-AFK para Minecraft Java **26.3**, Java **25**, Fabric Loader **0.19.5+** y **Fabric API**.
+Versión **Fabric de cliente** de Radig Anti-AFK para **Minecraft Java 26.2**, **Java 25**, **Fabric Loader 0.19.5+** y **Fabric API 0.160.0+26.2**.
 
-## Funciones
-- Acciones anti-AFK aleatorias: agacharse, saltar, caminar y girar suavemente.
-- Intervalo configurable, opciones para activar/desactivar acciones, duración y ángulos.
-- Regreso aproximado mediante movimiento inverso (no garantiza volver a la coordenada exacta).
-- HUD con contador de tiempo para la próxima acción.
-- Pantalla de opciones en dos páginas.
-- Persistencia en `config/radigantiafk.json` e importación opcional de `radigantiafk-client.toml` si existe.
+## Funcionalidades
 
-## Controles
-- **F9**: activar/desactivar Anti-AFK.
-- **F8**: abrir configuración. En Forge era F7, pero aquí usamos F8 para evitar conflicto con RecordCraft.
-- Son reasignables en Controles de Minecraft.
+- Acciones Anti-AFK aleatorias configurables: agacharse, saltar, caminar y girar suavemente la cámara.
+- Intervalo configurable entre acciones, opciones individuales y duración/ángulos ajustables.
+- Regreso aproximado mediante movimiento inverso después de caminar (no garantiza regresar exactamente a la posición inicial).
+- HUD con tiempo hasta la próxima acción.
+- Configuración en dos páginas y persistencia en `config/radigantiafk.json`.
+- Importación opcional del antiguo `config/radigantiafk-client.toml` de Forge, si existe.
+- Desactivación automática al detectar movimiento del usuario.
 
-## Desarrollo
-En una instalación de **JDK 25**, abrir este directorio en VS Code y ejecutar:
+## Teclas predeterminadas
+
+- **F9** — Activar/desactivar Anti-AFK.
+- **F8** — Abrir configuración.
+
+Ambas pueden reasignarse desde los controles de Minecraft.
+
+## Compilar / desarrollar
+
+Requiere JDK 25 y acceso a las dependencias de Fabric. Desde la raíz del repositorio:
 
 ```powershell
-.\gradlew.bat --version
 .\gradlew.bat clean build
 .\gradlew.bat runClient
 ```
 
-El archivo de distribución esperado está en `build/libs/radigantiafk-fabric-mc26.3-1.0.0.jar`.
+JAR de distribución esperado:
 
-**Advertencia:** este port aún requiere compilarse y probarse localmente antes de publicarse.
+`build/libs/radigantiafk-fabric-mc26.2-1.0.0.jar`
 
-## Notas
-- No requiere instalarse en el servidor; solo se usa del lado cliente.
-- Algunos servidores no permiten herramientas anti-AFK. Consulta sus reglas.
-- Este mod no garantiza evitar el sistema AFK de todos los servidores.
-- Mantener la rama Forge existente intacta; trabajar exclusivamente en `fabric-26.3`.
-- El ID `radigantiafk` se mantiene igual, pero los JAR de Forge y Fabric **no deben instalarse juntos**.
+**Estado:** adaptación desde Fabric 26.3. Es necesario comprobar la compilación y realizar pruebas funcionales en Minecraft 26.2 antes de publicarla.
+
+## Compatibilidad / consideraciones
+
+- Es un **mod de cliente**; no hace falta instalarlo en el servidor para usar sus funciones locales.
+- Mantiene el ID interno `radigantiafk`, y su configuración existente, para preservar compatibilidad.
+- No mezcles archivos JAR de Forge y Fabric en la misma instalación.
+- Las reglas de algunos servidores prohíben herramientas anti-AFK y no se garantiza compatibilidad con todos los sistemas de desconexión.
+- La rama `fabric-26.3` se conserva separada; para esta edición se utiliza `fabric-26.2`.
 
 ## Licencia
-All Rights Reserved. Ver `LICENSE.txt`.
+
+All Rights Reserved. Consulta `LICENSE.txt`.

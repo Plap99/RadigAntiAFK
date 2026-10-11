@@ -44,14 +44,14 @@ public final class AntiAfkClient implements ClientModInitializer {
 
     private static final KeyMapping TOGGLE_KEY = new KeyMapping(
         "key.radigantiafk.toggle",
-        InputConstants.Type.KEYBOARD,
+        InputConstants.Type.KEYSYM,
         InputConstants.KEY_F9,
         CATEGORY
     );
 
     private static final KeyMapping CONFIG_KEY = new KeyMapping(
         "key.radigantiafk.config",
-        InputConstants.Type.KEYBOARD,
+        InputConstants.Type.KEYSYM,
         InputConstants.KEY_F8,
         CATEGORY
     );

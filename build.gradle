@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-base { archivesName = 'radigantiafk-fabric-mc26.3' }
+base { archivesName = 'radigantiafk-fabric-mc26.2' }
 
 repositories { mavenCentral() }
 
